@@ -6,11 +6,14 @@
  */
  #include "menu.h"
 
+
  /*菜单代码思路:首先定义一个结构体包含(索引，上翻，下翻，确定，显示内容(该显示内容是一个函数指针void (*current_operation)();)
    然后用该结构体类型定义一个数组，该数组为结构体数组，每个元素都是结构体，可以访问结构体成员，(直观来看是将数组的值赋给成员)，实现上翻下翻和确认
    而操作函数的实现来源于结构体成员(函数指针)，该指针最后会赋值给一个指针变量，经过一系列变换后，最终实现函数操作。
    第一级菜单中选择某个功能，进入对应的二级菜单，实现具体功能。
  */
+int8 para_max = 18; //参数最大值
+int8 parameter_index = 0;
  
  //按键获取
 void get_keyandswitch()
@@ -59,7 +62,7 @@ void get_keyandswitch()
  {
  //{索引，向上，向下，确认，显示函数}
      //第0层
-     {0,1,1,1,(*fun_run_0)},                     //AIIT_meun
+     {0,6,6,1,(*fun_run_0)},                     //AIIT_meun
  
      //第1层
      {1,5,2, 6,(*fun_run_a1)},//just run
@@ -96,26 +99,37 @@ void get_keyandswitch()
      {24,23,21,2,(*fun_run_b34)},//esc
  
      {25,29,26,11,(*fun_run_c31)},//tcp off
-     {26,25,27,26,(*fun_run_c32)},
-     {27,26,28,27,(*fun_run_c33)},
-     {28,27,29,6,(*fun_run_c34)},
-     {29,28,25,3,(*fun_run_c35)},
+     {26,25,27,26,(*fun_run_c32)},//tcp ip
+     {27,26,28,27,(*fun_run_c33)},//tcp para
+     {28,27,29,6,(*fun_run_c34)},//run
+     {29,28,25,3,(*fun_run_c35)},//esc
  
      {30,33,31,30,(*fun_run_d31)},
      {31,30,32,31,(*fun_run_d32)},
      {32,31,33,32,(*fun_run_d33)},
      {33,32,30,33,(*fun_run_d34)},
+
+     {34,35,36,37,(*fun_run_b41)},//屏幕参数显示主状态
+     {35,35,35,35,(*fun_run_b42)},//只执行一次，在函数中返回34，作用为选中向上
+     {36,36,36,36,(*fun_run_b43)},//只执行一次，在函数中返回34，作用为选中向下
+     {37,37,37,37,(*fun_run_b44)},//只执行一次，在函数中返回34，作用为选中改值
+
+     //🔥🇺🇲✊
  };
 
 
- key_table parameter_table[100]=                 //结构体数组
+ key_table_parameter parameter_table[100]=                 //结构体数组
  {
  //{索引，向上，向下，确认，显示函数}
      //第0层
-     {0,1,1,1,(*fun_parameter_0)},                     //AIIT_meun
+     {0,1,1,1,1,(*fun_parameter_0)},                     //AIIT_meun
  
      //第1层
-     {1,1,1, 0,(*fun_parameter_a1)},
+     {1,2,3, 4,5,(*fun_parameter_p)},
+     {2,2,2,2,2,(*fun_parameter_up)},
+     {3,3,3,3,3,(*fun_parameter_down)},
+     {4,4,4,4,4,(*fun_parameter_add)},
+     {5,5,5,5,5,(*fun_parameter_minus)}
  
  };
  
@@ -178,15 +192,21 @@ void Menu_parameter(void)//菜单函数
  
     if(key1_flag)
     {
-        func_parameter_index = parameter_table[func_parameter_index].enter;    //确认
+        func_parameter_index = parameter_table[func_parameter_index].add;    //确认
     }
+   
+    if(key0_flag)
+      {
+         func_parameter_index = parameter_table[func_parameter_index].minus;    //确认
+      }
  
     if (func_parameter_index != last_parameter_index)
     {
         current_operation_index = parameter_table[func_parameter_index].current_operation;
         ips200_clear();
-        (*current_operation_index)();//执行当前操作函数
         last_parameter_index = func_parameter_index;
+        (*current_operation_index)();//执行当前操作函数
+        
     }
 }
  
@@ -269,6 +289,7 @@ void Menu_parameter(void)//菜单函数
       ips200_show_string(140, 16*3, "on");
    else
       ips200_show_string(140, 16*3, "off");
+   read_params();
 
  }
  
@@ -418,7 +439,6 @@ void Menu_parameter(void)//菜单函数
  
  void fun_run_a31()
  {
-    ips200_clear();
     big_state = 1;
  }
  
@@ -551,24 +571,320 @@ void Menu_parameter(void)//菜单函数
  
  }
  
+ int8 para_ipsshow_index = 1;
+ void fun_run_b41()
+ {
+   ips200_show_string(0,  16 * para_ipsshow_index, "->");
+   //不想写了，想看什么数据直接printf好了
+ }
+ void fun_run_b42()
+ {
  
+ 
+ }
+ void fun_run_b43()
+ {
+ 
+ 
+ }
+ void fun_run_b44()
+ {
+ 
+ 
+ }
 
 
 
  void fun_parameter_0()    //欢迎界面
  {
      //show_rgb565_image(0,16*5, (const uint16 *)gImage_SU, 240, 80, 240, 80, 0);
-     ips200_show_string(8*6, 300, "CANSHU__Southeast University");
+     ips200_show_string(8*6, 300, "Parameter_Set");
  }
  
  ////////////////////////////////////////////////////////////////////////////////////////////////////////第一层///////////////////////////////////////////////////////////////////////////////////////////////////////////
- void fun_parameter_a1()   //舵机
+ void fun_parameter_p()   
  {
-     ips200_show_string(0,  16*1, "->");
-     ips200_show_string(20, 16*1, "Set left max value");    //设置左向最大打角
-     ips200_show_string(20, 16*2, "Set right max value");   //设置右向最大打角
-     ips200_show_string(20, 16*3, "Set target angle");      //设置目标角度
-     ips200_show_string(20, 16*4, "Get current angle");     //获取当前角度
-     ips200_show_string(20, 16*5, "ESC");                   //返回上一级，下同
-     ips200_show_string(8*23, 16*19, "Page_1");             //显示页码，page1就是第一级，下同
+     ips200_show_string(0,  16*(parameter_index+1), "->");
+     ips200_show_string(20, 16*1, "servo_KP =");    
+     ips200_show_string(20, 16*2, "servo_KD =");  
+     ips200_show_string(20, 16*3, "speed_target_l =");      
+     ips200_show_string(20, 16*4, "speed_target_r =");
+     ips200_show_string(20, 16*5, "speed_KP =");
+     ips200_show_string(20, 16*6, "speed_KI =");
+     ips200_show_string(20, 16*7, "expo =");
+       ips200_show_string(20, 16*8, "offset_constant =");
+       ips200_show_string(20, 16*9, "ipaddress =");
+         ips200_show_string(20, 16*10, "ips_image_flag =");
+         ips200_show_string(20, 16*11, "tcp_image_flag =");
+         ips200_show_string(20, 16*12, "ips_image_choose =");
+         ips200_show_string(20, 16*13, "tcp_image_choose =");
+         ips200_show_string(20, 16*14, "speed_dif_p =");
+         ips200_show_string(20, 16*15, "speed_dif_d =");
+         ips200_show_string(20, 16*16, "servo_control_flag =");
+         ips200_show_string(20, 16*17, "img_process_flag =");
+         ips200_show_string(20, 16*18, "double_uvc_flag =");
+     
+     ips200_show_float(180, 16*1, servo_KP, 4, 2);
+   ips200_show_float(180, 16*2, servo_KD, 4, 2);
+   ips200_show_float(180, 16*3, speed_target_l, 4, 2);
+   ips200_show_float(180, 16*4, speed_target_r, 4, 2);
+   ips200_show_float(180, 16*5, speed_KP, 4, 2);
+   ips200_show_float(180, 16*6, speed_KI, 4, 2);
+   ips200_show_float(180, 16*7, expo, 4, 2);
+   ips200_show_float(180, 16*8, offset_constant, 4, 2);
+   ips200_show_float(180, 16*9, ipaddress, 4, 2);
+   ips200_show_float(180, 16*10, int(ips_image_flag), 4, 2);
+   ips200_show_float(180, 16*11, int(tcp_image_flag), 4, 2);
+   ips200_show_float(180, 16*12, ips_image_choose, 4, 2);
+   ips200_show_float(180, 16*13, tcp_image_choose, 4, 2);
+   ips200_show_float(180, 16*14, speed_dif_p, 4, 2);
+   ips200_show_float(180, 16*15, speed_dif_d, 4, 2);
+   ips200_show_float(180, 16*16, int(servo_control_flag), 4, 2);
+   ips200_show_float(180, 16*17, int(img_process_flag), 4, 2);
+   ips200_show_float(180, 16*18, int(double_uvc_flag), 4, 2);
+   
  }
+ void fun_parameter_down()
+ {
+   if(parameter_index == para_max)
+   {
+      parameter_index = -1;
+      
+   }
+      parameter_index++;
+      func_parameter_index = 1;
+ }
+ void fun_parameter_up()
+   {
+      if(parameter_index == 0)
+      {
+         parameter_index = para_max + 1;
+         
+      }
+      parameter_index--;
+      func_parameter_index = 1;
+   }
+
+void fun_parameter_add()
+{
+   switch (parameter_index)
+   {
+      case 0:
+         servo_KP += 0.1;
+         break;
+      case 1:
+         servo_KD += 0.1;
+         break;
+      case 2:
+         speed_target_l += 10;
+         break;
+      case 3:
+         speed_target_r += 10;
+         break;
+      case 4:
+         speed_KP++;
+         break;
+      case 5:
+         speed_KI += 0.1;
+         break;
+      case 6:
+         expo++;
+         break;
+      case 7:
+         offset_constant += 1; // Adjust offset_constant
+         break;
+      case 8:
+         ipaddress = 3 - ipaddress; // Adjust ipaddress
+         break;
+      case 9:
+         ips_image_flag = !ips_image_flag; // Toggle ips_image_flag
+         break;
+      case 10:
+         tcp_image_flag = !tcp_image_flag; // Toggle tcp_image_flag
+         break;
+      case 11:
+         ips_image_choose = 3 - ips_image_choose; // Adjust ips_image_choose
+         break;
+      case 12:
+         tcp_image_choose = 3 - tcp_image_choose; // Adjust tcp_image_choose
+         break;
+      case 13:
+         speed_dif_p += 0.1; // Adjust speed_dif_p
+         break;
+      case 14:
+         speed_dif_d += 0.1; // Adjust speed_dif_d
+         break;
+      case 15:
+         servo_control_flag = !servo_control_flag; // Toggle servo_control_flag
+         break;
+      case 16:
+         img_process_flag = !img_process_flag; // Toggle img_process_flag
+         break;
+      case 17:
+         double_uvc_flag = !double_uvc_flag; // Toggle double_uvc_flag
+         break;
+      default:
+         break;
+   }
+   save_params();
+   printf("save success\n");
+   func_parameter_index = 1;
+
+}
+ void fun_parameter_minus()
+ {
+   switch (parameter_index)
+   {
+      case 0:
+         servo_KP -= 0.1;
+         break;
+      case 1:
+         servo_KD -= 0.1;
+         break;
+      case 2:
+         speed_target_l -= 10;
+         break;
+      case 3:
+         speed_target_r -= 10;
+         break;
+      case 4:
+         speed_KP--;
+         break;
+      case 5:
+         speed_KI -= 0.1;
+         break;
+      case 6:
+         expo--;
+         break;
+      case 7:
+         offset_constant -= 1; // Adjust offset_constant
+         break;
+      case 8:
+         ipaddress = 3 - ipaddress; // Adjust ipaddress
+         break;
+      case 9:
+         ips_image_flag = !ips_image_flag; // Toggle ips_image_flag
+         break;
+      case 10:
+         tcp_image_flag = !tcp_image_flag; // Toggle tcp_image_flag
+         break;
+      case 11:
+         ips_image_choose = 3 - ips_image_choose; // Adjust ips_image_choose
+         break;
+      case 12:
+         tcp_image_choose = 3 - tcp_image_choose; // Adjust tcp_image_choose
+         break;
+      case 13:
+         speed_dif_p -= 0.1; // Adjust speed_dif_p
+         break;
+      case 14:
+         speed_dif_d -= 0.1; // Adjust speed_dif_d
+         break;
+      case 15:
+         servo_control_flag = !servo_control_flag; // Toggle servo_control_flag
+         break;
+      case 16:
+         img_process_flag = !img_process_flag; // Toggle img_process_flag
+         break;
+      case 17:
+         double_uvc_flag = !double_uvc_flag; // Toggle double_uvc_flag
+         break;
+      default:
+         break;
+   }
+   save_params();
+   printf("save success\n");
+   func_parameter_index = 1;
+       
+ }
+
+ void save_params()
+ {
+   std::ofstream file(PARAFILENAME);
+   if (file.is_open())
+   {
+       file << "servo_KP="<<servo_KP << std::endl;
+       file << "servo_KD="<<servo_KD << std::endl;
+       file << "speed_target_l="<<speed_target_l << std::endl;
+       file << "speed_target_r="<<speed_target_r << std::endl;
+         file << "speed_KP="<<speed_KP << std::endl;
+         file << "speed_KI="<<speed_KI << std::endl;
+         file << "expo="<<expo << std::endl;
+         file << "ipaddress="<<ipaddress << std::endl;
+         file << "ips_image_flag="<<int(ips_image_flag)<<std::endl;
+         file << "tcp_image_flag="<<int(tcp_image_flag)<<std::endl;
+         file << "ips_image_choose="<<ips_image_choose << std::endl;
+         file << "tcp_image_choose="<<tcp_image_choose << std::endl;
+         file << "speed_dif_p="<<speed_dif_p << std::endl;
+         file << "speed_dif_d="<<speed_dif_d << std::endl;
+         file << "servo_control_flag="<<int(servo_control_flag) << std::endl;
+         file << "img_process_flag="<<int(img_process_flag)<<std::endl;
+         file << "offset_constant="<<offset_constant << std::endl;
+         file << "double_uvc_flag="<<int(double_uvc_flag) << std::endl;
+         file.close();
+   }
+   else
+   {
+       printf("Unable to open file");
+   }
+   
+ }
+ void read_params()
+ {
+   std::ifstream file(PARAFILENAME);
+   if (file.is_open())
+   {
+       std::string line;
+       while (std::getline(file, line))
+       {
+           std::istringstream iss(line);
+           std::string key;
+           float value;
+           if (std::getline(iss, key, '=') && iss >> value)
+           {
+               if (key == "servo_KP")
+                   servo_KP = value;
+               else if (key == "servo_KD")
+                   servo_KD = value;
+               else if (key == "speed_target_l")
+                   speed_target_l = value;
+               else if (key == "speed_target_r")
+                   speed_target_r = value;
+               else if (key == "speed_KP")
+                   speed_KP = value;
+               else if (key == "speed_KI")
+                   speed_KI = value;
+               else if (key == "expo")
+                   expo = value;
+               else if (key == "ipaddress")
+                   ipaddress = value;
+               else if (key == "ips_image_flag")
+                   ips_image_flag = static_cast<int>(value);
+               else if (key == "tcp_image_flag")
+                   tcp_image_flag = static_cast<int>(value);
+               else if (key == "ips_image_choose")
+                     ips_image_choose = value;
+                  else if (key == "tcp_image_choose")
+                     tcp_image_choose = value;
+                  else if (key == "speed_dif_p")
+                     speed_dif_p = value;
+                  else if (key == "speed_dif_d")
+                     speed_dif_d = value;
+                  else if (key == "servo_control_flag")
+                     servo_control_flag = static_cast<int>(value);
+                  else if (key == "img_process_flag")
+                     img_process_flag = static_cast<int>(value);
+                  else if (key == "offset_constant")
+                     offset_constant = value;
+                  else if (key == "double_uvc_flag")
+                     double_uvc_flag = static_cast<int>(value);
+           }
+       }
+       file.close();
+   }
+   else
+   {
+       printf("Unable to open file");
+   }
+ }
+

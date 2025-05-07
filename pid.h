@@ -27,10 +27,15 @@ extern pid_param_t speed_pid_r;  // 电机PID
 extern float speed_KP, speed_KI,speed_KD, speed_IMAX, speed_OUTMAX;
 extern float speed_target_r;                      // 目标速度
 extern float speed_target_l;
-extern float speed_real;                        // 实际速度
-extern float speed_pwm;                         // 施加在电机上的PWM占空比
+extern float speed_real_r;                        // 实际速度
+extern float speed_pwm_r;                         // 施加在电机上的PWM占空比
+extern float speed_real_l;                        // 实际速度
+extern float speed_pwm_l; 
 
-
+extern float speed_b_l;
+extern float speed_b_r;
+extern float speed_k_l;
+extern float speed_k_r;
 
 void My_Pid_Init(void);
 void Pid_Param_Init(pid_param_t * pid, float kp, float ki, float kd, float imax, float outmax);

@@ -29,7 +29,7 @@ int8 Lost_line_right(void);
 int8 Lost_line_left(void);
 void Search_Line(void);
 void Camera_Parameter_Init(st_Camera *sptr);
-void Transfer_Camera(uint8 * p, uint8 *q, int16 pixel_num);
+void Transfer_Camera(uint8 * p, uint8 *q, int32 pixel_num);
 void Get01change_Dajin(void);
 uint8 Threshold_Deal(uint8* image, uint16 col, uint16 row, uint32 pixel_threshold);
 
@@ -101,6 +101,7 @@ extern uint32 Left_CirqueIntegration,Right_CirqueIntegration;
 
 extern uint8 image_yuanshi[UVC_HEIGHT][UVC_WIDTH];
 extern uint8 image_01[UVC_HEIGHT][UVC_WIDTH];
+extern uint8 image_last[UVC_HEIGHT][UVC_WIDTH];
 extern uint8 Threshold;
 extern uint8 search_line_end;
 extern uint8 road_width[UVC_HEIGHT];

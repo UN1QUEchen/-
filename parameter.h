@@ -8,6 +8,25 @@ extern int16 encoder_right;
 extern int8 big_state;
 extern bool ips_image_flag;
 extern bool tcp_image_flag;
+extern int8 ips_image_choose;
+extern int8 tcp_image_choose;
+extern float servo_KP, servo_KD;
+extern float servo_out;
+
+extern int16 expo;
+
+extern int8 ipaddress;
+
+extern float speed_dif_d;
+extern float speed_dif_p;
+
+extern bool servo_control_flag;
+
+extern bool img_process_flag;
+
+extern int offset_constant;
+
+extern bool double_uvc_flag; //双目摄像头标志位
 //事实上大部分别的参数都已经在各自文件定义好，整合到一起实在困难，因此不在此处列出。
 /*
 
@@ -19,8 +38,12 @@ extern bool tcp_image_flag;
 右目标速度
 电机kp
 电机ki
-电机kd
+电机kd*
 电机out限幅
+舵机kp
+舵机kd
+舵机ki*
+舵机限幅
 角度环偏差  float offset
 图像阈值    uint8 Threshold
 左右丢线数  uint8 l_lose_value, r_lose_value

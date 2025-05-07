@@ -35,6 +35,7 @@ struct YUAN_SU road_type, stage, distance, num;
 
 uint8 image_yuanshi[UVC_HEIGHT][UVC_WIDTH];      //原始图像
 uint8 image_01[UVC_HEIGHT][UVC_WIDTH];           //二值化图像
+uint8 image_last[UVC_HEIGHT][UVC_WIDTH];       //上次图像
 uint8  op;
 
 void Show_Judge_Cirque(void)
@@ -90,7 +91,7 @@ void Show_Right_Cirque()
 ////摄像头处理全流程
 void Camera_All_Deal(void)
 {
-    Transfer_Camera(rgay_image, image_yuanshi[0], UVC_WIDTH*UVC_HEIGHT);  //图像转存
+    Transfer_Camera(rgay_image_main, image_yuanshi[0], UVC_WIDTH*UVC_HEIGHT);  //图像转存
 
     //        Horizontal_line();
     Get01change_Dajin();                          //图像二值化
@@ -99,11 +100,12 @@ void Camera_All_Deal(void)
     //Show_Judge_Cirque();
     //Show_Left_Cirque();
     //Show_Right_Cirque();
-    Element_Test();                               //元素识别
-    Element_Handle();                             //元素处理
-    Handle_Roadblock();
+    //Element_Test();                               //元素识别
+    //Element_Handle();                             //元素处理
+    //Handle_Roadblock();
     Calculate_Offset();                           //计算偏差
-    Blacking();
+    ips200_clear();
+    //Blacking();
 
     //ips200_displayimage03x(image_01[0], UVC_WIDTH, UVC_HEIGHT);//显示二值化黑白图像
     //ips200_displayimage03x(image_yuanshi[0], UVC_WIDTH, UVC_HEIGHT);//显示灰度图像，此部分我主要用于调试断路区域的
@@ -126,9 +128,9 @@ void Camera_Parameter_Init(st_Camera *sptr)
 //  @return     void
 //  Sample usage:    Transfer_Camera(mt9v03x_image[0], image_yuanshi[0], UVC_WIDTH*UVC_HEIGHT);
 //-----------------------------------------------------------------------------------------
-void Transfer_Camera(uint8 *p, uint8 *q, int16 pixel_num)
+void Transfer_Camera(uint8 *p, uint8 *q, int32 pixel_num)
 {
-    for(int16 i = 0; i < pixel_num; i++)
+    for(int32 i = 0; i < pixel_num; i++)
         *(q +i) = *(p +i);
 }
 
