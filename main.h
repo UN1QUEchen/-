@@ -51,7 +51,8 @@ struct pwm_info servo_pwm_info;
 // 定义主板上舵机活动范围 角度                                                     
 #define SERVO_MOTOR_L_MAX           (75 )                       
 #define SERVO_MOTOR_R_MAX           (105)                       
-
+#define SERVO_DIR                   (1)
+float servo_motor_duty_middle = 90;
 // ------------------ 舵机占空比计算方式 ------------------
 // 
 // 舵机对应的 0-180 活动角度对应 控制脉冲的 0.5ms-2.5ms 高电平
@@ -64,7 +65,6 @@ struct pwm_info servo_pwm_info;
 // 
 // ------------------ 舵机占空比计算方式 ------------------
 #define SERVO_MOTOR_DUTY(x)         ((float)PWM_DUTY_MAX/(1000.0/(float)SERVO_MOTOR_FREQ)*(0.5+(float)(x)/90.0))
-
 
 float servo_motor_duty = 90.0;                                                  // 舵机动作角度
 float servo_motor_dir = 1;                                                      // 舵机动作状态

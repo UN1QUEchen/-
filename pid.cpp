@@ -1,11 +1,18 @@
 #include "pid.h"
 
 // 电机PID初始化参数
-float speed_KP = 5, speed_KI = 0.2,speed_KD = 0.0, speed_IMAX = 800, speed_OUTMAX = 800;
-float speed_target_l = 200;
-float speed_target_r = 200;
-float speed_real = 0.0;
-float speed_pwm = 0.0;
+float speed_KP = 2, speed_KI = 0,speed_KD = 0.0, speed_IMAX = 1000, speed_OUTMAX = 1000;
+float speed_target_l = 150;
+float speed_target_r = 150;
+float speed_real_l = 0.0;
+float speed_real_r = 0.0;
+float speed_pwm_l = 0.0;
+float speed_pwm_r = 0.0;
+
+float speed_b_l = 393.03;
+float speed_b_r = 396.15;
+float speed_k_l = 40;
+float speed_k_r = 40;
 
 pid_param_t speed_pid_l;  // 电机PID
 pid_param_t speed_pid_r;  // 电机PID
@@ -69,7 +76,7 @@ float PidLocCtrl(pid_param_t * pid, float error, float t)
 
     pid->out = pid->out_p + pid->out_i + pid->out_d;
 
-    pid->out = constrain_float(pid->out, 0.0, pid->outmax);
+    pid->out = constrain_float(pid->out, -pid->outmax, pid->outmax);
 
     return pid->out;
 }
@@ -93,7 +100,7 @@ float PidIncCtrl(pid_param_t * pid, float error, float t)
 
     pid->out += pid->out_p + pid->out_i + pid->out_d;
 
-    pid->out = constrain_float(pid->out, 0.0, pid->outmax);
+    pid->out = constrain_float(pid->out, -pid->outmax, pid->outmax);
     return pid->out;
 }
 
